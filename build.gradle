@@ -119,7 +119,6 @@ project(':coroutines') {
 project(':server') {
     dependencies {
         testRuntime 'ch.qos.logback:logback-classic:1.2.3'
-        testCompile 'com.jsoniter:jsoniter:0.9.15'
         testCompile project(':plugin-collections-jctools')
         testCompile project(':plugin-hashing-openhft')
         testCompile project(':plugin-logging-slf4j')
