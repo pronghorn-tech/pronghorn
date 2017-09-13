@@ -1,0 +1,18 @@
+[submodule "common"]
+	path = common
+	url = git@github.com:caturner81/common.git
+[submodule "coroutines"]
+	path = coroutines
+	url = git@github.com:caturner81/coroutines.git
+[submodule "plugin-collections-jctools"]
+	path = plugin-collections-jctools
+	url = git@github.com:caturner81/plugin-collections-jctools.git
+[submodule "plugin-hashing-openhft"]
+	path = plugin-hashing-openhft
+	url = git@github.com:caturner81/plugin-hashing-openhft.git
+[submodule "plugin-logging-slf4j"]
+	path = plugin-logging-slf4j
+	url = git@github.com:caturner81/plugin-logging-slf4j.git
+[submodule "server"]
+	path = server
+	url = git@github.com:caturner81/server.git
