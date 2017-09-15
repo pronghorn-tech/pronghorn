@@ -3,9 +3,9 @@ This repository contains a common multi-project Gradle build for working with al
 
 See individual project repositories below for more details.
 
-[Pronghorn Coroutine Framework](https://github.com/pronghorn/coroutines)
+[Pronghorn Coroutine Framework](https://github.com/pronghorn-tech/coroutines)
 
-[Pronghorn Http Server](https://github.com/pronghorn/server)
+[Pronghorn Http Server](https://github.com/pronghorn-tech/server)
 
 # License
 Copyright 2017 Pronghorn Technology LLC
