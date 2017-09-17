@@ -1,30 +1,26 @@
 buildscript {
-    ext {
-        kotlin_version = '1.1.4'
-        dokka_version = '0.9.15'
-    }
+    ext.kotlinVersion = '1.1.4'
+    ext.dokkaVersion = '0.9.15'
 
     repositories {
         jcenter()
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
-        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:latest.release'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     }
 }
 
-allprojects {
+configure(subprojects) {
     group 'tech.pronghorn'
-    version '0.1.0'
 
     apply plugin: 'kotlin'
     apply plugin: 'ivy-publish'
     apply plugin: 'org.jetbrains.dokka'
-    apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'maven'
+    apply plugin: 'signing'
     apply plugin: 'org.junit.platform.gradle.plugin'
 
     repositories {
@@ -38,24 +34,11 @@ allprojects {
     }
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
         testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.0'
         testCompile 'org.mockito:mockito-core:2.10.0'
     }
-
-    publishing {
-        publications {
-            ivyJava(IvyPublication) {
-                from components.java
-            }
-        }
-    }
-
-    artifactoryPublish {
-        publications(publishing.publications.ivyJava)
-    }
-
 
     dokka {
         moduleName = project.name
@@ -65,24 +48,65 @@ allprojects {
         sourceDirs = files('src/main/kotlin')
     }
 
-    artifactory {
-        contextUrl = System.properties['Artifactory']
-        publish {
-            repository {
-                repoKey = 'libs-snapshot-local'
-                username = System.properties["Username"]
-                password = System.properties["Password"]
-            }
-            ivy {
-                ivyLayout = '[organization]/[module]/ivy-[revision].xml'
-                artifactLayout = '[organization]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]'
-                mavenCompatible = true
-            }
-            defaults {
-                publishBuildInfo = true
-                publishArtifacts = true
-                publishPom = true
-                publishIvy = true
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+    signing {
+        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    if(project.hasProperty('special')) {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    if(project.hasProperty('special')) {
+                        authentication(userName: ossrhUsername, password: ossrhPassword)
+                    }
+                }
+
+                pom {
+                    version = version
+                    groupId = 'tech.pronghorn'
+                }
+
+                pom.project {
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'caturner81'
+                            name 'Chris Turner'
+                            email 'chris@pronghorn.tech'
+                        }
+                    }
+                }
             }
         }
     }
@@ -90,7 +114,7 @@ allprojects {
 
 project(':common') {
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+        compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     }
 }
 
@@ -118,6 +142,9 @@ project(':plugin-logging-slf4j') {
 project(':coroutines') {
     dependencies {
         compile project(':common')
+        testCompile project(':plugin-collections-jctools')
+        testCompile project(':plugin-hashing-openhft')
+        testCompile project(':plugin-logging-slf4j')
     }
 }
 

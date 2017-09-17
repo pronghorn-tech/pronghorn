@@ -1,5 +1,5 @@
 # Pronghorn Parent Repository
-This repository contains a common multi-project Gradle build for working with all Pronghorn products together.
+This repository contains a common multi-project Gradle build for working with all Pronghorn projects together.
 
 See individual project repositories below for more details.
 
