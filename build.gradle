@@ -150,10 +150,10 @@ project(':coroutines') {
 
 project(':server') {
     dependencies {
+        compile project(':coroutines')
         testRuntime 'ch.qos.logback:logback-classic:1.2.3'
         testCompile project(':plugin-collections-jctools')
         testCompile project(':plugin-hashing-openhft')
         testCompile project(':plugin-logging-slf4j')
-        compile project(':coroutines')
     }
 }
