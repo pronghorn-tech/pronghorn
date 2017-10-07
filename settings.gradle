@@ -1,5 +1,6 @@
 rootProject.name = 'pronghorn'
 include 'common',
+        'mongodb-driver-stream',
         'plugin-collections-jctools',
         'plugin-hashing-openhft',
         'plugin-logging-slf4j',

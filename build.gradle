@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlinVersion = '1.1.50'
+    ext.kotlinVersion = '1.1.51'
     ext.dokkaVersion = '0.9.15'
 
     repositories {
@@ -20,8 +20,17 @@ configure(subprojects) {
     apply plugin: 'ivy-publish'
     apply plugin: 'org.jetbrains.dokka'
     apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'signing'
     apply plugin: 'org.junit.platform.gradle.plugin'
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
 
     repositories {
         mavenCentral()
@@ -151,6 +160,17 @@ project(':coroutines') {
 project(':server') {
     dependencies {
         compile project(':coroutines')
+        testRuntime 'ch.qos.logback:logback-classic:1.2.3'
+        testCompile project(':plugin-collections-jctools')
+        testCompile project(':plugin-hashing-openhft')
+        testCompile project(':plugin-logging-slf4j')
+    }
+}
+
+project(':mongodb-driver-stream') {
+    dependencies {
+        compile project(':server')
+        compile 'org.mongodb:mongodb-driver-async:3.5.0'
         testRuntime 'ch.qos.logback:logback-classic:1.2.3'
         testCompile project(':plugin-collections-jctools')
         testCompile project(':plugin-hashing-openhft')
