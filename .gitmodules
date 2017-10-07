@@ -16,3 +16,6 @@
 [submodule "server"]
 	path = server
 	url = git@github.com:pronghorn-tech/server.git
+[submodule "mongodb-driver-stream"]
+	path = mongodb-driver-stream
+	url = git@github.com:pronghorn-tech/mongodb-driver-stream.git
