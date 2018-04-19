@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlinVersion = '1.1.51'
+    ext.kotlinVersion = '1.2.31'
     ext.dokkaVersion = '0.9.15'
 
     repositories {
@@ -27,6 +27,9 @@ configure(subprojects) {
     publishing {
         publications {
             mavenJava(MavenPublication) {
+                artifact project.sourcesJar { // not required, includes sourcesJar with correct classifer
+                    classifier "sources"
+                }
                 from components.java
             }
         }
@@ -45,8 +48,8 @@ configure(subprojects) {
     dependencies {
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-        testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.0'
-        testCompile 'org.mockito:mockito-core:2.10.0'
+        testCompile 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+        testCompile 'org.mockito:mockito-core:2.16.0'
     }
 
     dokka {
@@ -127,9 +130,18 @@ project(':common') {
     }
 }
 
+project(':coroutines') {
+    dependencies {
+        compile project(':common')
+        testCompile project(':plugin-collections-jctools')
+        testCompile project(':plugin-hashing-openhft')
+        testCompile project(':plugin-logging-slf4j')
+    }
+}
+
 project(':plugin-collections-jctools') {
     dependencies {
-        compile 'org.jctools:jctools-core:2.1.0'
+        compile 'org.jctools:jctools-core:2.1.1'
         compile project(':common')
     }
 }
@@ -145,15 +157,6 @@ project(':plugin-logging-slf4j') {
     dependencies {
         compile 'org.slf4j:slf4j-api:1.7.25'
         compile project(':common')
-    }
-}
-
-project(':coroutines') {
-    dependencies {
-        compile project(':common')
-        testCompile project(':plugin-collections-jctools')
-        testCompile project(':plugin-hashing-openhft')
-        testCompile project(':plugin-logging-slf4j')
     }
 }
 
